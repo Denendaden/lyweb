@@ -1,46 +1,27 @@
-use crate::ssg::*;
+use std::{error::Error, fmt};
 
-use std::fmt;
-
-use actix_web::{error, http::{header::ContentType, StatusCode}, HttpResponse, ResponseError};
-use derive_more::{Error};
-
-#[derive(Debug, Error)]
+#[derive(Debug)]
 pub enum LyError {
     NotFound,
     InternalServerError,
 }
 
-impl error::ResponseError for LyError {
-    fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .insert_header(ContentType::html())
-            .body(
-                match LyWebpage::read_file("www/error.html") {
-                    Ok(lw) => lw
-                        .fill_template("error", &self.to_string())
-                        .contents,
-                    Err(_) => self.to_string(),
-                }
-            )
-    }
-
-    fn status_code(&self) -> StatusCode {
+impl LyError {
+    pub fn http_code(&self) -> u16 {
         match *self {
-            Self::NotFound => StatusCode::NOT_FOUND,
-            Self::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::NotFound => 404,
+            Self::InternalServerError => 500,
         }
     }
 }
 
 impl fmt::Display for LyError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} -- {}", self.status_code().as_str(), match self {
-            LyError::NotFound => "file not found",
-            LyError::InternalServerError => "internal server error",
-        })
+        write!(f, "{} {:?}", self.http_code(), self)
     }
 }
+
+impl Error for LyError {}
 
 impl From<std::io::Error> for LyError {
     fn from(err: std::io::Error) -> Self {
