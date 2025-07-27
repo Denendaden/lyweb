@@ -17,13 +17,13 @@ might contain the following:
 ```
 LySSG provides functions to replace the text `[[content]]` with some content.
 This means you can ensure consistent styling, etc. across all pages that use the
-same template. An example of this in action:
+same template. An example of this in use:
 ```rust
-LyWebpage::read_file("templates/template.html")?
-    .fill_template("content", &fs::read_to_string("www/content.html")?)
+LyWebpage::from_file("templates/template.html")?
+    .fill_from_file("content", "www/content.html")?
     .contents
 ```
-This snippet would return a `String` that could be sent in response to a
+This snippet would return a `String` that could be sent in a response to a
 request.
 
 ## Planned features
