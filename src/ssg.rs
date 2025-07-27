@@ -11,9 +11,11 @@ use std::{cell::OnceCell, fs, path::Path};
 /// Creating a LyWebpage from a template and filling the template with content from
 /// a file, and then accessing the content of the result:
 /// ```rust
-/// LyWebpage::from_file("templates/main.html")?
-///     .fill_from_file("content", "www/content.html")?
-///     .contents
+/// use lyssg::ssg::LyWebpage;
+///
+/// let html = LyWebpage::from_file("test/template.html").unwrap()
+///     .fill_from_file("content", "test/content.html").unwrap()
+///     .contents;
 /// ```
 /// In `templates/template.html`:
 /// ```html
@@ -44,9 +46,30 @@ impl LyWebpage {
         self
     }
 
+    /// Fills the template with a Markdown-formatted string converted to HTML.
+    /// If `gfm` is enabled, GitHub Flavored Markdown is used; otherwise, CommonMark
+    /// is used.
+    pub fn fill_from_md_str(self, key: &str, md: &str, gfm: bool) -> Self {
+        use markdown::{to_html, to_html_with_options, Options};
+
+        let html = if gfm {
+            // if it doesn't compile, better to just show the markdown instead of an error
+            to_html_with_options(md, &Options::gfm()).unwrap_or(md.to_string())
+        } else {
+            to_html(md)
+        };
+        self.fill_with_str(key, &html)
+    }
+
     /// Fills the template with the content of the given file.
     pub fn fill_from_file<P: AsRef<Path>>(self, key: &str, filepath: P) -> Result<Self, LyError> {
         Ok(self.fill_with_str(key, &fs::read_to_string(filepath)?))
+    }
+
+    /// Fills the template with the contents of a Markdown file, converted to HTML.
+    pub fn fill_from_md_file<P: AsRef<Path>>(self, key: &str, filepath: P, gfm: bool) -> Result<Self, LyError> {
+        let md = fs::read_to_string(filepath)?;
+        Ok(self.fill_from_md_str(key, &md, gfm))
     }
 
     /// Resolves statements of the form `[[IF [path] ... ELSE ...]]`
@@ -60,9 +83,11 @@ impl LyWebpage {
     /// ```
     /// Calling this on the backend:
     /// ```rust
-    /// LyWebpage::from_file("templates/main.html")?
-    ///     .resolve_ifs("blog")? // if /blog was requested
-    ///     .contents
+    /// use lyssg::ssg::LyWebpage;
+    ///
+    /// let html = LyWebpage::from_file("test/template.html").unwrap()
+    ///     .resolve_ifs("blog").unwrap() // if /blog was requested
+    ///     .contents;
     /// ```
     pub fn resolve_ifs(mut self, expr: &str) -> Result<Self, LyError> {
         // use a OnceCell to cache the compiled regex and avoid recompiling

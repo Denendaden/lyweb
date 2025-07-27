@@ -10,4 +10,5 @@ keywords = ["web", "ssg", "template"]
 categories = ["template-engine", "web-programming", "parsing"]
 
 [dependencies]
+markdown = "1.0.0"
 regex = "1.11.1"
