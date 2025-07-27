@@ -1,12 +1,17 @@
 use std::{error::Error, fmt};
 
+/// Provides error handling.
 #[derive(Debug)]
 pub enum LyError {
+    /// A page or resource was not found (HTTP 404).
     NotFound,
+    /// Something went wrong internally with the server (HTTP 500).
+    /// TODO: split into more finely-tuned errors.
     InternalServerError,
 }
 
 impl LyError {
+    /// Returns the HTTP response status code associated with the error.
     pub fn http_code(&self) -> u16 {
         match *self {
             Self::NotFound => 404,
