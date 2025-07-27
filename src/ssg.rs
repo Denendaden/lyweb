@@ -89,7 +89,7 @@ impl LyWebpage {
     ///     .resolve_ifs("blog").unwrap() // if /blog was requested
     ///     .contents;
     /// ```
-    pub fn resolve_ifs(mut self, expr: &str) -> Result<Self, LyError> {
+    pub fn resolve_ifs(mut self, path: &str) -> Result<Self, LyError> {
         // use a OnceCell to cache the compiled regex and avoid recompiling
         let re_cell = OnceCell::new();
 
@@ -118,7 +118,7 @@ impl LyWebpage {
 
         while let Some(_) = re.captures_read_at(&mut locs, &self.contents, i) {
             s += &self.contents[i..loc!(0).0];
-            if expr == &self.contents[loc!(1).0..loc!(1).1] {
+            if path == &self.contents[loc!(1).0..loc!(1).1] {
                 // path matches IF branch; use that
                 s += &self.contents[loc!(2).0..loc!(2).1];
             } else {

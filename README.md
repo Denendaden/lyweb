@@ -17,7 +17,8 @@ might contain the following:
 ```
 LySSG provides functions to replace the text `[[content]]` with some content.
 This means you can ensure consistent styling, etc. across all pages that use the
-same template. An example of this in use:
+same template. An example of this in use, taken from
+[my own website](https://lyra.pink):
 ```rust
 LyWebpage::from_file("templates/main.html")?
     .fill_from_file("content", "www/content.html")?
@@ -28,6 +29,6 @@ request.
 
 ## Planned features
 - [x] Navigation bars in templates that disable links to the page you are on
-- [ ] Conversion from Markdown to HTML to make creating pages easier
+- [x] Conversion from Markdown to HTML to make creating pages easier
 - [ ] Some kind of blog system that can show lists of recent posts
 - [ ] Caching to avoid unnecessarily regenerating webpages

@@ -14,11 +14,22 @@ pub mod ssg;
 
 #[cfg(test)]
 mod tests {
-    use crate::{error::*, ssg::*};
+    use crate::ssg::*;
 
     // helper function to avoid problems with whitespace when checking test results
     fn remove_whitespace(s: &mut String) {
         s.retain(|c| !c.is_whitespace())
+    }
+
+    #[test]
+    fn files() {
+        let mut page = LyWebpage::from_file("test/template.html").unwrap()
+            .fill_from_file("content", "test/content.html").unwrap()
+            .resolve_ifs("blog").unwrap()
+            .contents;
+        remove_whitespace(&mut page);
+
+        assert_eq!(page, "<html><body><h1>Blog</h1><p>testing!</p></body></html>");
     }
 
     #[test]
