@@ -8,6 +8,8 @@ pub enum LyError {
     /// Something went wrong internally with the server (HTTP 500).
     /// TODO: split into more finely-tuned errors.
     InternalServerError,
+    /// Something went wrong with compiling a webpage (HTTP 500).
+    TemplatingError,
 }
 
 impl LyError {
@@ -16,6 +18,8 @@ impl LyError {
         match *self {
             Self::NotFound => 404,
             Self::InternalServerError => 500,
+            // default to error code 500 (Internal Server Error)
+            _ => 500,
         }
     }
 }
@@ -34,5 +38,11 @@ impl From<std::io::Error> for LyError {
             std::io::ErrorKind::NotFound => Self::NotFound,
             _ => Self::InternalServerError,
         }
+    }
+}
+
+impl From<regex::Error> for LyError {
+    fn from(_err: regex::Error) -> Self {
+        Self::TemplatingError
     }
 }

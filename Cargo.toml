@@ -1,6 +1,6 @@
 [package]
 name = "lyssg"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "MIT"
 description = "Simple SSG designed for personal websites"
@@ -10,3 +10,4 @@ keywords = ["web", "ssg", "template"]
 categories = ["template-engine", "web-programming", "parsing"]
 
 [dependencies]
+regex = "1.11.1"
