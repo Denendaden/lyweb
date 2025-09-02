@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "lyssg"
+name = "lyweb"
 version = "0.1.1"
 dependencies = [
  "markdown",
