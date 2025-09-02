@@ -26,9 +26,3 @@ LyWebpage::from_file("templates/main.html")?
 ```
 This snippet would return a `String` that could be sent in a response to a
 request.
-
-## Planned features
-- [x] Navigation bars in templates that disable links to the page you are on
-- [x] Conversion from Markdown to HTML to make creating pages easier
-- [ ] Some kind of blog system that can show lists of recent posts
-- [ ] Caching to avoid unnecessarily regenerating webpages
